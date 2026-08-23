@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+@theme {
+  --color-romantic-bg: #0d0509;
+  --color-romantic-surface: #1a0a10;
+  --color-romantic-card: rgba(40, 12, 22, 0.6);
+  --color-burgundy: #6b1d3a;
+  --color-burgundy-light: #8b2d4a;
+  --color-crimson: #a81744;
+  --color-crimson-light: #d41e5c;
+  --color-rose-gold: #e8a0b4;
+  --color-rose-pink: #ff6b8a;
+  --color-rose-soft: #ffd1dc;
+  --color-romantic-pink: #ff4081;
+  --color-romantic-glow: rgba(168, 23, 68, 0.4);
+  --color-gold: #d4a574;
+  --color-gold-light: #e8c39e;
+  --font-romantic: "Great Vibes", cursive;
+  --font-body: "Inter", sans-serif;
+}
+
+/* Global base styles */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-family: var(--font-body);
+  background: var(--color-romantic-bg);
+  color: #f5e6ec;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100dvh;
+  background: linear-gradient(180deg, #0d0509 0%, #1a0a10 30%, #150812 60%, #0d0509 100%);
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar hidden */
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  scrollbar-width: none;
+}
+
+/* Glassmorphism utilities */
+.glass {
+  background: rgba(40, 12, 22, 0.45);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(168, 23, 68, 0.15);
+}
+
+.glass-strong {
+  background: rgba(40, 12, 22, 0.7);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(168, 23, 68, 0.2);
+}
+
+/* Romantic glow */
+.glow-sm {
+  box-shadow: 0 0 15px rgba(168, 23, 68, 0.3), 0 0 30px rgba(168, 23, 68, 0.1);
+}
+
+.glow-md {
+  box-shadow: 0 0 20px rgba(168, 23, 68, 0.4), 0 0 40px rgba(168, 23, 68, 0.15), 0 0 80px rgba(168, 23, 68, 0.05);
+}
+
+.glow-lg {
+  box-shadow: 0 0 30px rgba(168, 23, 68, 0.5), 0 0 60px rgba(168, 23, 68, 0.2), 0 0 120px rgba(168, 23, 68, 0.1);
+}
+
+.glow-text {
+  text-shadow: 0 0 20px rgba(168, 23, 68, 0.6), 0 0 40px rgba(168, 23, 68, 0.3);
+}
+
+/* Floating petals animation */
+@keyframes float-petal {
+  0% {
+    transform: translate(0, -10vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(var(--drift, 80px), 110vh) rotate(var(--spin, 360deg));
+    opacity: 0;
+  }
+}
+
+@keyframes float-heart {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-40px) scale(1.2);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-80px) scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(168, 23, 68, 0.4), 0 0 40px rgba(168, 23, 68, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(168, 23, 68, 0.6), 0 0 60px rgba(168, 23, 68, 0.25);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* iOS safe areas */
+.safe-top {
+  padding-top: env(safe-area-inset-top, 20px);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Romantic input styles */
+input, textarea, select {
+  font-family: var(--font-body);
+}
+
+input[type="date"],
+input[type="time"] {
+  color-scheme: dark;
+}
+
+/* Page transition wrapper */
+.page-container {
+  flex: 1;
+  padding-bottom: 100px;
+  overflow-y: auto;
+}
