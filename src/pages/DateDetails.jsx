@@ -11,6 +11,8 @@ export default function DateDetails() {
   const { currentPlan, addDate, resetPlan } = useDateContext();
   const [confirmed, setConfirmed] = useState(false);
   const [showHearts, setShowHearts] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '—';
@@ -23,27 +25,60 @@ export default function DateDetails() {
   const formatTime = (timeStr) => {
     if (!timeStr) return '—';
     const [h, m] = timeStr.split(':');
-    const hour = parseInt(h);
+    const hour = parseInt(h, 10);
     const ampm = hour >= 12 ? 'PM' : 'AM';
     const displayHour = hour % 12 || 12;
     return `${displayHour}:${m} ${ampm}`;
   };
 
-  const handleConfirm = () => {
-    addDate({
+  const handleConfirm = async () => {
+    if (isSubmitting || confirmed) return;
+
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    const dateData = {
       date: currentPlan.date,
       time: currentPlan.time,
       activity: currentPlan.activity,
       location: currentPlan.location || currentPlan.place?.name || 'Not specified',
-      place: currentPlan.place,
-      note: currentPlan.note,
-    });
-    setConfirmed(true);
-    setShowHearts(true);
-    setTimeout(() => {
-      resetPlan();
-      navigate('/my-dates');
-    }, 2500);
+      place: currentPlan.place ? { name: currentPlan.place.name } : null,
+      note: currentPlan.note || '',
+    };
+
+    try {
+      const response = await fetch('http://localhost:5000/api/dates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dateData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Save date to localStorage via Context
+        addDate(dateData);
+        setConfirmed(true);
+        setShowHearts(true);
+        setTimeout(() => {
+          resetPlan();
+          navigate('/my-dates');
+        }, 2500);
+      } else {
+        setErrorMessage(
+          data.message || 'Something went wrong while sending your date request. Please try again. ❤️'
+        );
+      }
+    } catch (err) {
+      console.error('Fetch error:', err);
+      setErrorMessage(
+        'Unable to connect to server. Please check that backend server is running on http://localhost:5000 ❤️'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const details = [
@@ -84,6 +119,23 @@ export default function DateDetails() {
         </p>
       </motion.div>
 
+      {/* Error notification banner */}
+      {errorMessage && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-5 p-4 rounded-2xl border text-xs leading-relaxed"
+          style={{
+            background: 'rgba(168, 23, 68, 0.25)',
+            borderColor: 'rgba(212, 30, 92, 0.4)',
+            color: '#ffd1dc',
+            boxShadow: '0 0 15px rgba(168, 23, 68, 0.3)',
+          }}
+        >
+          ⚠️ {errorMessage}
+        </motion.div>
+      )}
+
       {/* Summary Card */}
       <GlassCard className="p-6 mb-6" glow>
         {details.map((detail, i) => (
@@ -97,7 +149,7 @@ export default function DateDetails() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 + i * 0.1 }}
           >
-            <span className="text-lg flex-shrink-0">{detail.icon}</span>
+            <span className="text-lg shrink-0">{detail.icon}</span>
             <div>
               <p className="text-[10px] uppercase tracking-widest m-0 mb-1"
                 style={{ color: 'rgba(232, 160, 180, 0.5)' }}>
@@ -143,8 +195,9 @@ export default function DateDetails() {
             fullWidth
             size="lg"
             onClick={handleConfirm}
+            disabled={isSubmitting}
           >
-            Confirm Date ❤️
+            {isSubmitting ? 'Sending... ❤️' : 'Confirm Date ❤️'}
           </RomanticButton>
         </motion.div>
       )}
