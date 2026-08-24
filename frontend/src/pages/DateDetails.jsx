@@ -47,7 +47,7 @@ export default function DateDetails() {
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/dates', {
+      const response = await fetch('https://date-back-three.vercel.app/api/dates', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ export default function DateDetails() {
     } catch (err) {
       console.error('Fetch error:', err);
       setErrorMessage(
-        'Unable to connect to server. Please check that backend server is running on http://localhost:5000 ❤️'
+        'Unable to connect to server. Please check that backend server is running on https://date-back-three.vercel.app ❤️'
       );
     } finally {
       setIsSubmitting(false);
